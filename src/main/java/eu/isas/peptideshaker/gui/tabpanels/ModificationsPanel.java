@@ -3416,7 +3416,7 @@ public class ModificationsPanel extends javax.swing.JPanel {
                     }
 
                     for (String modification : allVariableMods) {
-                        if (!modification.equalsIgnoreCase(NO_MODIFICATION) && peptideMap.containsKey(modification)) {
+                        if (!modification.equalsIgnoreCase(NO_MODIFICATION) && peptideMap.containsKey(modification)) { // @TODO: what about two mods with the same mass?
                             ((DefaultTableModel) modificationJTable.getModel()).addRow(
                                     new Object[]{
                                         new Color(modificationProfile.getColor(modification)),
