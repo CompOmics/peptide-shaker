@@ -5,7 +5,7 @@
     <groupId>eu.isas.peptideshaker</groupId>
     <artifactId>PeptideShaker</artifactId>
     <packaging>jar</packaging>
-    <version>3.0.12</version>
+    <version>3.0.13</version>
     <name>PeptideShaker</name>
     <url>https://github.com/compomics/peptide-shaker</url>
     <description>Interpretation of proteomics identification results</description>
@@ -340,7 +340,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>5.1.17</version>
+            <version>5.1.18</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -485,7 +485,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>6.1.15</version>
+            <version>6.2.11</version>
         </dependency>
  
         <dependency>

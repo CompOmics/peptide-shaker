@@ -327,6 +327,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         reshakeJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/relims_logo.png"))); // NOI18N
         reshakeJButton.setText("PRIDE Reshake");
         reshakeJButton.setToolTipText("<html>\nReanalyze PRIDE projects<br>\n</html>");
+        reshakeJButton.setEnabled(false);
         reshakeJButton.setFocusPainted(false);
         reshakeJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         reshakeJButton.setIconTextGap(19);
@@ -416,7 +417,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                         .addGroup(backgroundPanelLayout.createSequentialGroup()
                             .addComponent(searchJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(reshakeJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)))
+                            .addComponent(reshakeJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(settingsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
