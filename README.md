@@ -48,7 +48,7 @@ PeptideShaker currently supports nine different analysis tasks:
   * **GO Enrichment:** perform GO enrichment and find enriched GO terms in your dataset.
   * **Validation:** inspect and fine tune the validation process.
   * **QC Plots:** examine the quality of the results with Quality Control plots.
-  * **Reshake PRIDE:** re-analyze public datasets in PRIDE as if they were your own.
+  * **Reshake PRIDE:** re-analyze public datasets in PRIDE as if they were your own. **- no longer supported**
 
 All data can also easily be exported for follow up analysis in other tools.
 
