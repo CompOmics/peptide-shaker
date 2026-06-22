@@ -911,7 +911,19 @@ public class MzIdentMLExportDialog extends javax.swing.JDialog {
             inputValid = false;
         }
 
+        boolean fastaAvailable = peptideShakerGUI.getProjectDetails() != null
+                && peptideShakerGUI.getProjectDetails().getFastaFile() != null;
+
+        if (!fastaAvailable) {
+            inputValid = false;
+        }
+
         convertJButton.setEnabled(inputValid);
+        convertJButton.setToolTipText(
+                fastaAvailable
+                        ? "Click here to start the conversion!"
+                        : "mzIdentML export requires a FASTA file."
+        );
 
         // highlight the fields that have not been filled
         if (contactFirstNameJTextField.getText().length() > 0) {

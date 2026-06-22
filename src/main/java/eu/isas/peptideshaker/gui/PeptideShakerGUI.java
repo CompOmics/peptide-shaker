@@ -7788,7 +7788,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         String fastaFile = getProjectDetails().getFastaFile();
 
-                        if (fastaFile.lastIndexOf(PsZipUtils.UNZIP_SUB_FOLDER) != -1) {
+                        if (fastaFile != null && fastaFile.lastIndexOf(PsZipUtils.UNZIP_SUB_FOLDER) != -1) {
 
                             dataFiles.add(fastaFile);
 
@@ -8387,7 +8387,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     public void run() {
 
                         File psdbFile = psdbParent.getPsdbFile();
-                        File fastaFile = new File(getProjectDetails().getFastaFile());
+                        String fastaFilePath = getProjectDetails().getFastaFile();
+                        File fastaFile = fastaFilePath == null ? null : new File(fastaFilePath);
 
                         try {
 

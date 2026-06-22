@@ -210,8 +210,7 @@ public class ProjectDetails extends ExperimentObject {
      */
     public void setFastaFile(File fastaFile) {
 
-        
-        fastaFilePath = fastaFile.getAbsolutePath();
+        fastaFilePath = fastaFile == null ? null : fastaFile.getAbsolutePath();
 
     }
 

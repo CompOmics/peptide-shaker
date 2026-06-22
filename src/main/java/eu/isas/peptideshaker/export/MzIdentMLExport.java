@@ -3230,6 +3230,10 @@ public class MzIdentMLExport {
         }
 
         // add the database
+        if (projectDetails.getFastaFile() == null) {
+            throw new IllegalStateException("mzIdentML export requires a FASTA file.");
+        }
+
         File fastaFile = new File(projectDetails.getFastaFile());
         writer.write(getCurrentTabSpace());
         writer.write("<SearchDatabase numDatabaseSequences=\"");
