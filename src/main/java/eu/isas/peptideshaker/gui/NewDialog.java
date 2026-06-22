@@ -1290,14 +1290,12 @@ public class NewDialog extends javax.swing.JDialog {
 
                 return fileName.endsWith(".instanovo.csv")
                         || fileName.endsWith(".instanovo.csv.gz")
-                        || fileName.endsWith(".instanovo.refined.csv")
-                        || fileName.endsWith(".instanovo.refined.csv.gz")
                         || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "InstaNovo (.instanovo.csv, .instanovo.refined.csv, .gz)";
+                return "InstaNovo (.instanovo.csv, .instanovo.csv.gz)";
             }
         };
 
@@ -1310,14 +1308,30 @@ public class NewDialog extends javax.swing.JDialog {
 
                 return fileName.endsWith(".instanovoplus.csv")
                         || fileName.endsWith(".instanovoplus.csv.gz")
-                        || fileName.endsWith(".instanovo.refined.csv")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "InstaNovo+ (.instanovoplus.csv, .instanovoplus.csv.gz)";
+            }
+        };
+
+        // filter for InstaNovo with refinement only
+        FileFilter instaNovoRefinedFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                String fileName = myFile.getName().toLowerCase();
+
+                return fileName.endsWith(".instanovo.refined.csv")
                         || fileName.endsWith(".instanovo.refined.csv.gz")
                         || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "InstaNovo+ (.instanovoplus.csv, .instanovo.refined.csv, .gz)";
+                return "InstaNovo with refinement (.instanovo.refined.csv, .instanovo.refined.csv.gz)";
             }
         };
 
@@ -1407,6 +1421,7 @@ public class NewDialog extends javax.swing.JDialog {
         fileChooser.addChoosableFileFilter(pNovoFilter);
         fileChooser.addChoosableFileFilter(instaNovoFilter);
         fileChooser.addChoosableFileFilter(instaNovoPlusFilter);
+        fileChooser.addChoosableFileFilter(instaNovoRefinedFilter);
         fileChooser.addChoosableFileFilter(cossFilter);
         fileChooser.addChoosableFileFilter(sageFilter);
 
