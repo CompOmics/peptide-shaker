@@ -650,7 +650,16 @@ public class NewDialog extends javax.swing.JDialog {
             this.setVisible(false);
             peptideShakerGUI.setVisible(true);
 
-            ProjectType projectType = ProjectType.getProjectType(typeCmb.getSelectedItem().toString());
+            // de novo only project (no protein sequence database): force a PSM level
+            // project without target/decoy FDR
+            final ProjectType projectType;
+            if (fastaFile == null) {
+                identificationParameters.getFastaParameters().setTargetDecoy(false);
+                projectType = ProjectType.psm;
+            } else {
+                projectType = ProjectType.getProjectType(typeCmb.getSelectedItem().toString());
+            }
+
             peptideShakerGUI.setIdentificationParameters(identificationParameters);
             peptideShakerGUI.setProcessingParameters(processingParameters);
             peptideShakerGUI.setDisplayParameters(displayPreferences);
@@ -1869,16 +1878,17 @@ public class NewDialog extends javax.swing.JDialog {
             databaseLabel.setForeground(Color.BLACK);
             databaseLabel.setToolTipText(null);
             fastaFileTxt.setToolTipText(null);
-        } else {
+        } else if (fastaFileTxt.getText() != null && fastaFileTxt.getText().length() > 0) {
+            // a FASTA path was provided but the file could not be found
             databaseLabel.setForeground(Color.RED);
-            if (fastaFileTxt.getText().length() > 0) {
-                databaseLabel.setToolTipText("FASTA file not found!");
-                fastaFileTxt.setToolTipText("FASTA file not found!");
-            } else {
-                databaseLabel.setToolTipText("Please select the database file used");
-                fastaFileTxt.setToolTipText("Please select the database file used");
-            }
+            databaseLabel.setToolTipText("FASTA file not found!");
+            fastaFileTxt.setToolTipText("FASTA file not found!");
             allValid = false;
+        } else {
+            // no FASTA provided: optional, a de novo only (PSM level) project will be created
+            databaseLabel.setForeground(Color.BLACK);
+            databaseLabel.setToolTipText("Optional. Without a FASTA file a de novo only (PSM level) project is created.");
+            fastaFileTxt.setToolTipText("Optional. Without a FASTA file a de novo only (PSM level) project is created.");
         }
 
         if (identificationParameters != null && settingsComboBox.getSelectedIndex() != 0) {
@@ -1931,10 +1941,20 @@ public class NewDialog extends javax.swing.JDialog {
         }
 
         if (fastaFile == null) {
-            JOptionPane.showMessageDialog(null, "Please verify the input for FASTA file.",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            databaseLabel.setForeground(Color.RED);
-            return false;
+
+            // no protein sequence database: only a de novo (PSM level) project can be created
+            int outcome = JOptionPane.showConfirmDialog(
+                    this,
+                    "No FASTA file selected.\n\n"
+                    + "A de novo only project (PSM level, without protein inference\n"
+                    + "or target/decoy FDR) will be created. Continue?",
+                    "No FASTA File",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+            );
+
+            return outcome == JOptionPane.YES_OPTION;
+
         }
 
         return true;
