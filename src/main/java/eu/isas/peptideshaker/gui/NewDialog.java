@@ -36,6 +36,7 @@ import eu.isas.peptideshaker.gui.parameters.ProjectParametersDialog;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import com.compomics.util.experiment.io.mass_spectrometry.cms.CmsFolder;
+import eu.isas.peptideshaker.fileimport.IdentificationFileUtils;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
 import eu.isas.peptideshaker.validation.MatchesValidator;
@@ -1072,33 +1073,7 @@ public class NewDialog extends javax.swing.JDialog {
 
                 String fileName = myFile.getName().toLowerCase();
 
-                return fileName.endsWith(".omx")
-                        || fileName.endsWith(".t.xml")
-                        || fileName.endsWith(".pep.xml")
-                        || fileName.endsWith(".dat")
-                        || fileName.endsWith(".mzid")
-                        || fileName.endsWith(".ms-amanda.csv")
-                        || fileName.endsWith(".res")
-                        || fileName.endsWith(".tide-search.target.txt")
-                        || fileName.endsWith(".tags")
-                        || fileName.endsWith(".pnovo.txt")
-                        || fileName.endsWith(".novor.csv")
-                        || fileName.endsWith(".coss.tsv")
-                        || fileName.endsWith(".sage.tsv")
-                        || fileName.endsWith(".psm")
-                        || fileName.endsWith(".omx.gz")
-                        || fileName.endsWith(".t.xml.gz")
-                        || fileName.endsWith(".pep.xml.gz")
-                        || fileName.endsWith(".mzid.gz")
-                        || fileName.endsWith(".ms-amanda.csv.gz")
-                        || fileName.endsWith(".res.gz")
-                        || fileName.endsWith(".tide-search.target.txt.gz")
-                        || fileName.endsWith(".tags.gz")
-                        || fileName.endsWith(".pnovo.txt.gz")
-                        || fileName.endsWith(".novor.csv.gz")
-                        || fileName.endsWith(".coss.tsv.gz")
-                        || fileName.endsWith(".sage.tsv.gz")
-                        || fileName.endsWith(".psm.gz")
+                return IdentificationFileUtils.isSupportedIdentificationFile(fileName)
                         || fileName.endsWith(".zip")
                         || myFile.isDirectory();
             }
@@ -1306,6 +1281,46 @@ public class NewDialog extends javax.swing.JDialog {
             }
         };
 
+        // filter for InstaNovo only
+        FileFilter instaNovoFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                String fileName = myFile.getName().toLowerCase();
+
+                return fileName.endsWith(".instanovo.csv")
+                        || fileName.endsWith(".instanovo.csv.gz")
+                        || fileName.endsWith(".instanovo.refined.csv")
+                        || fileName.endsWith(".instanovo.refined.csv.gz")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "InstaNovo (.instanovo.csv, .instanovo.refined.csv, .gz)";
+            }
+        };
+
+        // filter for InstaNovo+ only
+        FileFilter instaNovoPlusFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                String fileName = myFile.getName().toLowerCase();
+
+                return fileName.endsWith(".instanovoplus.csv")
+                        || fileName.endsWith(".instanovoplus.csv.gz")
+                        || fileName.endsWith(".instanovo.refined.csv")
+                        || fileName.endsWith(".instanovo.refined.csv.gz")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "InstaNovo+ (.instanovoplus.csv, .instanovo.refined.csv, .gz)";
+            }
+        };
+
         // filter for coss only
         FileFilter cossFilter = new FileFilter() {
             @Override
@@ -1390,6 +1405,8 @@ public class NewDialog extends javax.swing.JDialog {
         fileChooser.addChoosableFileFilter(direcTagFilter);
         fileChooser.addChoosableFileFilter(novorFilter);
         fileChooser.addChoosableFileFilter(pNovoFilter);
+        fileChooser.addChoosableFileFilter(instaNovoFilter);
+        fileChooser.addChoosableFileFilter(instaNovoPlusFilter);
         fileChooser.addChoosableFileFilter(cossFilter);
         fileChooser.addChoosableFileFilter(sageFilter);
 

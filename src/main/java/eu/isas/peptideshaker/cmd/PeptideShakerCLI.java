@@ -29,6 +29,7 @@ import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.parameters.UtilitiesUserParameters;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import eu.isas.peptideshaker.export.ProjectExport;
+import eu.isas.peptideshaker.fileimport.IdentificationFileUtils;
 import eu.isas.peptideshaker.utils.PsdbParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
@@ -1187,33 +1188,7 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                     String nameLowerCase = unzippedFile.getName().toLowerCase();
 
-                    if (nameLowerCase.endsWith(".omx")
-                            || nameLowerCase.endsWith(".t.xml")
-                            || nameLowerCase.endsWith(".pep.xml")
-                            || nameLowerCase.endsWith(".dat")
-                            || nameLowerCase.endsWith(".mzid")
-                            || nameLowerCase.endsWith(".ms-amanda.csv")
-                            || nameLowerCase.endsWith(".res")
-                            || nameLowerCase.endsWith(".tide-search.target.txt")
-                            || nameLowerCase.endsWith(".tags")
-                            || nameLowerCase.endsWith(".pnovo.txt")
-                            || nameLowerCase.endsWith(".novor.csv")
-                            || nameLowerCase.endsWith(".coss.tsv")
-                            || nameLowerCase.endsWith(".sage.tsv")
-                            || nameLowerCase.endsWith(".psm")
-                            || nameLowerCase.endsWith(".omx.gz")
-                            || nameLowerCase.endsWith(".t.xml.gz")
-                            || nameLowerCase.endsWith(".pep.xml.gz")
-                            || nameLowerCase.endsWith(".mzid.gz")
-                            || nameLowerCase.endsWith(".ms-amanda.csv.gz")
-                            || nameLowerCase.endsWith(".res.gz")
-                            || nameLowerCase.endsWith(".tide-search.target.txt.gz")
-                            || nameLowerCase.endsWith(".tags.gz")
-                            || nameLowerCase.endsWith(".pnovo.txt.gz")
-                            || nameLowerCase.endsWith(".novor.csv.gz")
-                            || nameLowerCase.endsWith(".coss.tsv.gz")
-                            || nameLowerCase.endsWith(".sage.tsv.gz")
-                            || nameLowerCase.endsWith(".psm.gz")) {
+                    if (IdentificationFileUtils.isSupportedIdentificationFile(nameLowerCase)) {
 
                         identificationFiles.add(unzippedFile);
 
