@@ -27,6 +27,7 @@ import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.parameters.tools.ProcessingParameters;
 import com.compomics.util.parameters.UtilitiesUserParameters;
+import com.compomics.util.parameters.peptide_shaker.ProjectType;
 import com.compomics.util.parameters.identification.advanced.ValidationQcParameters;
 import eu.isas.peptideshaker.export.ProjectExport;
 import eu.isas.peptideshaker.fileimport.IdentificationFileUtils;
@@ -837,7 +838,9 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
 
                 }
 
-                File fastaFile = new File(projectDetails.getFastaFile());
+                File fastaFile = projectDetails.getFastaFile() == null
+                        ? null
+                        : new File(projectDetails.getFastaFile());
 
                 try {
 
@@ -1327,13 +1330,15 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
         // try to locate the fasta file
         if (fastaFile == null) {
 
+            // de novo only project: proceed without a protein sequence database
             waitingHandler.appendReport(
-                    "FASTA file not set (or not in zip file)!",
+                    "No FASTA file provided. Creating a de novo only (PSM level) project "
+                    + "without protein inference or target/decoy FDR.",
                     true,
                     true
             );
 
-            waitingHandler.setRunCanceled();
+            identificationParameters.getFastaParameters().setTargetDecoy(false);
 
         } else if (!fastaFile.exists()) {
 
@@ -1385,19 +1390,23 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
         }
 
         // get the summary information for the FASTA file
-        try {
+        if (fastaFile != null) {
 
-            // get the FASTA summary
-            FastaSummary fastaSummary = loadFastaFile(waitingHandler);
+            try {
 
-            // set the background species
-            identificationParameters.getGeneParameters().setBackgroundSpeciesFromFastaSummary(fastaSummary);
+                // get the FASTA summary
+                FastaSummary fastaSummary = loadFastaFile(waitingHandler);
 
-        } catch (IOException e) {
+                // set the background species
+                identificationParameters.getGeneParameters().setBackgroundSpeciesFromFastaSummary(fastaSummary);
 
-            e.printStackTrace();
-            waitingHandler.appendReport("An error occurred while parsing the FASTA file.", true, true);
-            waitingHandler.setRunCanceled();
+            } catch (IOException e) {
+
+                e.printStackTrace();
+                waitingHandler.appendReport("An error occurred while parsing the FASTA file.", true, true);
+                waitingHandler.setRunCanceled();
+
+            }
 
         }
 
@@ -1418,8 +1427,8 @@ public class PeptideShakerCLI extends PsdbParent implements Callable {
         // set the spectrum counting prefrences
         spectrumCountingParameters = new SpectrumCountingParameters();
 
-        // set the project type
-        projectType = cliInputBean.getProjectType();
+        // set the project type (de novo only projects are restricted to the PSM level)
+        projectType = fastaFile == null ? ProjectType.psm : cliInputBean.getProjectType();
 
         // check the project reference
         for (String forbiddenChar : Util.FORBIDDEN_CHARACTERS) {

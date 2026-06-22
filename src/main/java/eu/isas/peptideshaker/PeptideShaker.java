@@ -296,14 +296,19 @@ public class PeptideShaker {
         PsmScoringParameters psmScoringPreferences = identificationParameters.getPsmScoringParameters();
         FastaParameters fastaParameters = identificationParameters.getFastaParameters();
 
-        FastaSummary fastaSummary = FastaSummary.getSummary(
-                projectDetails.getFastaFile(),
-                fastaParameters,
-                waitingHandler
-        );
+        // de novo only projects can be imported without a protein sequence database
+        FastaSummary fastaSummary = projectDetails.getFastaFile() == null
+                ? null
+                : FastaSummary.getSummary(
+                        projectDetails.getFastaFile(),
+                        fastaParameters,
+                        waitingHandler
+                );
 
         // set the background species
-        identificationParameters.getGeneParameters().setBackgroundSpeciesFromFastaSummary(fastaSummary);
+        if (fastaSummary != null) {
+            identificationParameters.getGeneParameters().setBackgroundSpeciesFromFastaSummary(fastaSummary);
+        }
 
         ArrayList<Integer> usedAlgorithms = projectDetails.getIdentificationAlgorithms();
 
