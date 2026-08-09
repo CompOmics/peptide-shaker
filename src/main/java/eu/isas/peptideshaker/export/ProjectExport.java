@@ -100,11 +100,17 @@ public class ProjectExport {
         }
 
         ArrayList<String> dataFiles = new ArrayList<>(2 * spectrumProvider.getOrderedFileNamesWithoutExtensions().length + 2);
-        dataFiles.add(fastaFile.getAbsolutePath());
 
-        String fastaExtension = IoUtil.getExtension(fastaFile);
-        File FMFile = new File(fastaFile.getAbsolutePath().replace(fastaExtension, ".fmi"));
-        dataFiles.add(FMFile.getAbsolutePath());
+        // de novo only projects have no protein sequence database to bundle
+        if (fastaFile != null) {
+
+            dataFiles.add(fastaFile.getAbsolutePath());
+
+            String fastaExtension = IoUtil.getExtension(fastaFile);
+            File FMFile = new File(fastaFile.getAbsolutePath().replace(fastaExtension, ".fmi"));
+            dataFiles.add(FMFile.getAbsolutePath());
+
+        }
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Getting Spectrum Files. Please Wait...");

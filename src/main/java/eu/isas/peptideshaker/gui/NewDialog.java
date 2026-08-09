@@ -36,6 +36,7 @@ import eu.isas.peptideshaker.gui.parameters.ProjectParametersDialog;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.parameters.quantification.spectrum_counting.SpectrumCountingParameters;
 import com.compomics.util.experiment.io.mass_spectrometry.cms.CmsFolder;
+import eu.isas.peptideshaker.fileimport.IdentificationFileUtils;
 import eu.isas.peptideshaker.utils.PsZipUtils;
 import eu.isas.peptideshaker.utils.Tips;
 import eu.isas.peptideshaker.validation.MatchesValidator;
@@ -649,7 +650,16 @@ public class NewDialog extends javax.swing.JDialog {
             this.setVisible(false);
             peptideShakerGUI.setVisible(true);
 
-            ProjectType projectType = ProjectType.getProjectType(typeCmb.getSelectedItem().toString());
+            // de novo only project (no protein sequence database): force a PSM level
+            // project without target/decoy FDR
+            final ProjectType projectType;
+            if (fastaFile == null) {
+                identificationParameters.getFastaParameters().setTargetDecoy(false);
+                projectType = ProjectType.psm;
+            } else {
+                projectType = ProjectType.getProjectType(typeCmb.getSelectedItem().toString());
+            }
+
             peptideShakerGUI.setIdentificationParameters(identificationParameters);
             peptideShakerGUI.setProcessingParameters(processingParameters);
             peptideShakerGUI.setDisplayParameters(displayPreferences);
@@ -1072,33 +1082,7 @@ public class NewDialog extends javax.swing.JDialog {
 
                 String fileName = myFile.getName().toLowerCase();
 
-                return fileName.endsWith(".omx")
-                        || fileName.endsWith(".t.xml")
-                        || fileName.endsWith(".pep.xml")
-                        || fileName.endsWith(".dat")
-                        || fileName.endsWith(".mzid")
-                        || fileName.endsWith(".ms-amanda.csv")
-                        || fileName.endsWith(".res")
-                        || fileName.endsWith(".tide-search.target.txt")
-                        || fileName.endsWith(".tags")
-                        || fileName.endsWith(".pnovo.txt")
-                        || fileName.endsWith(".novor.csv")
-                        || fileName.endsWith(".coss.tsv")
-                        || fileName.endsWith(".sage.tsv")
-                        || fileName.endsWith(".psm")
-                        || fileName.endsWith(".omx.gz")
-                        || fileName.endsWith(".t.xml.gz")
-                        || fileName.endsWith(".pep.xml.gz")
-                        || fileName.endsWith(".mzid.gz")
-                        || fileName.endsWith(".ms-amanda.csv.gz")
-                        || fileName.endsWith(".res.gz")
-                        || fileName.endsWith(".tide-search.target.txt.gz")
-                        || fileName.endsWith(".tags.gz")
-                        || fileName.endsWith(".pnovo.txt.gz")
-                        || fileName.endsWith(".novor.csv.gz")
-                        || fileName.endsWith(".coss.tsv.gz")
-                        || fileName.endsWith(".sage.tsv.gz")
-                        || fileName.endsWith(".psm.gz")
+                return IdentificationFileUtils.isSupportedIdentificationFile(fileName)
                         || fileName.endsWith(".zip")
                         || myFile.isDirectory();
             }
@@ -1306,6 +1290,60 @@ public class NewDialog extends javax.swing.JDialog {
             }
         };
 
+        // filter for InstaNovo only
+        FileFilter instaNovoFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                String fileName = myFile.getName().toLowerCase();
+
+                return fileName.endsWith(".instanovo.csv")
+                        || fileName.endsWith(".instanovo.csv.gz")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "InstaNovo (.instanovo.csv, .instanovo.csv.gz)";
+            }
+        };
+
+        // filter for InstaNovo+ only
+        FileFilter instaNovoPlusFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                String fileName = myFile.getName().toLowerCase();
+
+                return fileName.endsWith(".instanovoplus.csv")
+                        || fileName.endsWith(".instanovoplus.csv.gz")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "InstaNovo+ (.instanovoplus.csv, .instanovoplus.csv.gz)";
+            }
+        };
+
+        // filter for InstaNovo with refinement only
+        FileFilter instaNovoRefinedFilter = new FileFilter() {
+            @Override
+            public boolean accept(File myFile) {
+
+                String fileName = myFile.getName().toLowerCase();
+
+                return fileName.endsWith(".instanovo.refined.csv")
+                        || fileName.endsWith(".instanovo.refined.csv.gz")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "InstaNovo with refinement (.instanovo.refined.csv, .instanovo.refined.csv.gz)";
+            }
+        };
+
         // filter for coss only
         FileFilter cossFilter = new FileFilter() {
             @Override
@@ -1390,6 +1428,9 @@ public class NewDialog extends javax.swing.JDialog {
         fileChooser.addChoosableFileFilter(direcTagFilter);
         fileChooser.addChoosableFileFilter(novorFilter);
         fileChooser.addChoosableFileFilter(pNovoFilter);
+        fileChooser.addChoosableFileFilter(instaNovoFilter);
+        fileChooser.addChoosableFileFilter(instaNovoPlusFilter);
+        fileChooser.addChoosableFileFilter(instaNovoRefinedFilter);
         fileChooser.addChoosableFileFilter(cossFilter);
         fileChooser.addChoosableFileFilter(sageFilter);
 
@@ -1837,16 +1878,17 @@ public class NewDialog extends javax.swing.JDialog {
             databaseLabel.setForeground(Color.BLACK);
             databaseLabel.setToolTipText(null);
             fastaFileTxt.setToolTipText(null);
-        } else {
+        } else if (fastaFileTxt.getText() != null && fastaFileTxt.getText().length() > 0) {
+            // a FASTA path was provided but the file could not be found
             databaseLabel.setForeground(Color.RED);
-            if (fastaFileTxt.getText().length() > 0) {
-                databaseLabel.setToolTipText("FASTA file not found!");
-                fastaFileTxt.setToolTipText("FASTA file not found!");
-            } else {
-                databaseLabel.setToolTipText("Please select the database file used");
-                fastaFileTxt.setToolTipText("Please select the database file used");
-            }
+            databaseLabel.setToolTipText("FASTA file not found!");
+            fastaFileTxt.setToolTipText("FASTA file not found!");
             allValid = false;
+        } else {
+            // no FASTA provided: optional, a de novo only (PSM level) project will be created
+            databaseLabel.setForeground(Color.BLACK);
+            databaseLabel.setToolTipText("Optional. Without a FASTA file a de novo only (PSM level) project is created.");
+            fastaFileTxt.setToolTipText("Optional. Without a FASTA file a de novo only (PSM level) project is created.");
         }
 
         if (identificationParameters != null && settingsComboBox.getSelectedIndex() != 0) {
@@ -1899,10 +1941,20 @@ public class NewDialog extends javax.swing.JDialog {
         }
 
         if (fastaFile == null) {
-            JOptionPane.showMessageDialog(null, "Please verify the input for FASTA file.",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            databaseLabel.setForeground(Color.RED);
-            return false;
+
+            // no protein sequence database: only a de novo (PSM level) project can be created
+            int outcome = JOptionPane.showConfirmDialog(
+                    this,
+                    "No FASTA file selected.\n\n"
+                    + "A de novo only project (PSM level, without protein inference\n"
+                    + "or target/decoy FDR) will be created. Continue?",
+                    "No FASTA File",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+            );
+
+            return outcome == JOptionPane.YES_OPTION;
+
         }
 
         return true;

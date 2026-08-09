@@ -123,7 +123,10 @@ public class PsSearchParametersSection {
 
                 case database:
 
-                    String fastaFileName = IoUtil.getFileName(projectDetails.getFastaFile());
+                    // de novo only projects are created without a protein sequence database
+                    String fastaFileName = projectDetails.getFastaFile() == null
+                            ? ""
+                            : IoUtil.getFileName(projectDetails.getFastaFile());
                     writer.write(fastaFileName);
                     break;
 

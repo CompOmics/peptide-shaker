@@ -6748,37 +6748,42 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                     boolean fileFound = true;
 
-                    try {
+                    // de novo only projects are opened without a protein sequence database
+                    if (getProjectDetails().getFastaFile() != null) {
 
-                        FastaSummary fastaSummary = psdbParent.loadFastaFile(progressDialog);
+                        try {
 
-                        if (fastaSummary == null) {
+                            FastaSummary fastaSummary = psdbParent.loadFastaFile(progressDialog);
+
+                            if (fastaSummary == null) {
+                                fileFound = false;
+                            }
+
+                        } catch (IOException e) {
+
                             fileFound = false;
+
                         }
 
-                    } catch (IOException e) {
+                        if (!fileFound && !locateFastaFileManually()) {
 
-                        fileFound = false;
+                            String fastaFilePath = getProjectDetails().getFastaFile();
 
-                    }
+                            JOptionPane.showMessageDialog(
+                                    peptideShakerGUI,
+                                    "An error occurred while reading:\n" + fastaFilePath + "."
+                                    + "\n\nFile not found.",
+                                    "File Input Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
 
-                    if (!fileFound && !locateFastaFileManually()) {
+                            clearData(true, true);
+                            clearParameters();
+                            progressDialog.setRunFinished();
+                            openingExistingProject = false;
+                            return;
 
-                        String fastaFilePath = getProjectDetails().getFastaFile();
-
-                        JOptionPane.showMessageDialog(
-                                peptideShakerGUI,
-                                "An error occurred while reading:\n" + fastaFilePath + "."
-                                + "\n\nFile not found.",
-                                "File Input Error",
-                                JOptionPane.ERROR_MESSAGE
-                        );
-
-                        clearData(true, true);
-                        clearParameters();
-                        progressDialog.setRunFinished();
-                        openingExistingProject = false;
-                        return;
+                        }
 
                     }
 
@@ -7783,7 +7788,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
 
                         String fastaFile = getProjectDetails().getFastaFile();
 
-                        if (fastaFile.lastIndexOf(PsZipUtils.UNZIP_SUB_FOLDER) != -1) {
+                        if (fastaFile != null && fastaFile.lastIndexOf(PsZipUtils.UNZIP_SUB_FOLDER) != -1) {
 
                             dataFiles.add(fastaFile);
 
@@ -8382,7 +8387,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, JavaHome
                     public void run() {
 
                         File psdbFile = psdbParent.getPsdbFile();
-                        File fastaFile = new File(getProjectDetails().getFastaFile());
+                        String fastaFilePath = getProjectDetails().getFastaFile();
+                        File fastaFile = fastaFilePath == null ? null : new File(fastaFilePath);
 
                         try {
 

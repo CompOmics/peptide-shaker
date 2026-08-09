@@ -1,0 +1,12 @@
+experiment_name,scan_number,spectrum_id,precursor_mz,precursor_charge,prediction_id,predictions,log_probs,token_log_probs,group,predictions_tokenised,delta_mass_ppm
+small,0,small:0,451.25348,2,0,IAHYNKR,-0.0022980831563472748,,no_group,"I, A, H, Y, N, K, R",0.6781111138830191
+small,1,small:1,626.79913,2,1,VKEDPDGEHAR,-0.02967553772032261,,no_group,"V, K, E, D, P, D, G, E, H, A, R",0.5631788291281487
+small,2,small:2,598.80054,2,2,C[UNIMOD:4]GHTNNLRPK,-0.0007023849757388234,,no_group,"C[UNIMOD:4], G, H, T, N, N, L, R, P, K",1.2717089403102473
+small,3,small:3,561.7985,2,3,VVQEQGTHPK,-0.0022270865738391876,,no_group,"V, V, Q, E, Q, G, T, H, P, K",0.44677940607191685
+small,4,small:4,414.25836,2,4,KGKPEIR,-0.011797032319009304,,no_group,"K, G, K, P, E, I, R",0.4272695909090774
+small,5,small:5,406.71677,2,5,SLSHSPGK,-0.0007751179509796202,,no_group,"S, L, S, H, S, P, G, K",0.16842187268163986
+small,6,small:6,674.29034,2,6,HNSYTC[UNIMOD:4]EATHK,-0.0006685678963549435,,no_group,"H, N, S, Y, T, C[UNIMOD:4], E, A, T, H, K",0.9187436973876446
+small,7,small:7,449.86273,3,7,NHYHGGDYGAEK,-1.2669868469238281,,no_group,"N, H, Y, H, G, G, D, Y, G, A, E, K",1.7397899725548347
+small,8,small:8,585.28577,2,8,RPDGDAASQPR,-0.0004168327432125807,,no_group,"R, P, D, G, D, A, A, S, Q, P, R",1.320722354303481
+small,9,small:9,428.76614,2,9,KPAAAAVTK,-0.013702432624995708,,no_group,"K, P, A, A, A, A, V, T, K",0.11894595964346488
+small,10,small:10,452.7346,2,10,EKEELEK,-0.004479729570448399,,no_group,"E, K, E, E, L, E, K",0.34678153602909306
