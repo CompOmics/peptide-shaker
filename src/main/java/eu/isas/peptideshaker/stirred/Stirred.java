@@ -18,6 +18,7 @@ import com.compomics.util.parameters.identification.IdentificationParameters;
 import com.compomics.util.waiting.Duration;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
+import eu.isas.peptideshaker.fileimport.IdentificationFileUtils;
 import eu.isas.peptideshaker.fileimport.PsmImporter;
 import eu.isas.peptideshaker.stirred.modules.IdImporter;
 import eu.isas.peptideshaker.stirred.modules.StirRunnable;
@@ -316,32 +317,7 @@ public class Stirred {
                     }
                 }
 
-                if (fileNameLowerCase.endsWith(".omx")
-                        || fileNameLowerCase.endsWith(".t.xml")
-                        || fileNameLowerCase.endsWith(".pep.xml")
-                        || fileNameLowerCase.endsWith(".dat")
-                        || fileNameLowerCase.endsWith(".mzid")
-                        || fileNameLowerCase.endsWith(".ms-amanda.csv")
-                        || fileNameLowerCase.endsWith(".res")
-                        || fileNameLowerCase.endsWith(".tide-search.target.txt")
-//                        || fileNameLowerCase.endsWith(".tags")
-//                        || fileNameLowerCase.endsWith(".pnovo.txt")
-//                        || fileNameLowerCase.endsWith(".novor.csv")
-                        || fileNameLowerCase.endsWith(".coss.tsv")
-                        || fileNameLowerCase.endsWith(".sage.tsv")
-                        || fileNameLowerCase.endsWith(".psm")
-                        || fileNameLowerCase.endsWith(".omx.gz")
-                        || fileNameLowerCase.endsWith(".t.xml.gz")
-                        || fileNameLowerCase.endsWith(".pep.xml.gz")
-                        || fileNameLowerCase.endsWith(".mzid.gz")
-                        || fileNameLowerCase.endsWith(".ms-amanda.csv.gz")
-                        || fileNameLowerCase.endsWith(".res.gz")
-                        || fileNameLowerCase.endsWith(".tide-search.target.txt.gz")
-                        //                            || fileNameLowerCase.endsWith(".tags.gz")
-                        //                            || fileNameLowerCase.endsWith(".pnovo.txt.gz")
-                        //                            || fileNameLowerCase.endsWith(".novor.csv.gz")
-                        || fileNameLowerCase.endsWith(".sage.tsv.gz")
-                        || fileNameLowerCase.endsWith(".psm.gz")) {
+                if (IdentificationFileUtils.isSupportedStirredIdentificationFile(fileNameLowerCase)) {
 
                     searchEngineResultsFiles.add(file);
 

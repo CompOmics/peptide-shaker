@@ -233,7 +233,8 @@ public class FileImporter {
 
             GeneParameters geneParameters = identificationParameters.getGeneParameters();
 
-            if (geneParameters.getUseGeneMapping()) {
+            // gene mapping relies on the protein sequence database, skip it for de novo only projects
+            if (geneParameters.getUseGeneMapping() && projectDetails.getFastaFile() != null) {
 
                 waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                 waitingHandler.appendReport(
@@ -965,6 +966,27 @@ public class FileImporter {
     ) throws IOException {
 
         String fastaFilePath = projectDetails.getFastaFile();
+
+        // de novo only project imported without a protein sequence database
+        if (fastaFilePath == null) {
+
+            waitingHandler.appendReport(
+                    "No FASTA file provided. Importing de novo identifications without protein mapping.",
+                    true,
+                    true
+            );
+
+            fastaSummary = null;
+
+            EmptySequenceProvider emptySequenceProvider = new EmptySequenceProvider();
+            sequenceProvider = emptySequenceProvider;
+            fastaMapper = emptySequenceProvider;
+            proteinDetailsProvider = emptySequenceProvider;
+
+            return;
+
+        }
+
         File fastaFile = new File(fastaFilePath);
 
         waitingHandler.appendReport(

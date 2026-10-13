@@ -20,6 +20,7 @@ import com.compomics.util.io.compression.ZipUtils;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.parameters.identification.IdentificationParameters;
 import eu.isas.peptideshaker.export.PsdbExporter;
+import eu.isas.peptideshaker.fileimport.EmptySequenceProvider;
 import eu.isas.peptideshaker.parameters.PeptideShakerParameters;
 import eu.isas.peptideshaker.preferences.DisplayParameters;
 import com.compomics.util.gui.filtering.FilterParameters;
@@ -266,7 +267,7 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
 
             }
 
-        } else {
+        } else if (psParameters.getProjectDetails().getFastaFile() != null) {
 
             boolean fastaFileFound = false;
 
@@ -300,10 +301,23 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
             }
         }
 
-        psParameters.setSequenceProvider(fmIndex);
-        psParameters.setProteinDetailsProvider(fmIndex);
-        sequenceProvider = fmIndex;
-        proteinDetailsProvider = fmIndex;
+        if (fmIndex != null) {
+
+            psParameters.setSequenceProvider(fmIndex);
+            psParameters.setProteinDetailsProvider(fmIndex);
+            sequenceProvider = fmIndex;
+            proteinDetailsProvider = fmIndex;
+
+        } else {
+
+            // de novo only project opened without a protein sequence database
+            EmptySequenceProvider emptySequenceProvider = new EmptySequenceProvider();
+            psParameters.setSequenceProvider(emptySequenceProvider);
+            psParameters.setProteinDetailsProvider(emptySequenceProvider);
+            sequenceProvider = emptySequenceProvider;
+            proteinDetailsProvider = emptySequenceProvider;
+
+        }
 
         objectsDB.updateObject(PeptideShakerParameters.KEY, psParameters);
 
@@ -590,6 +604,11 @@ public class PsdbParent extends UserPreferencesParent implements AutoCloseable {
     public FastaSummary loadFastaFile(
             WaitingHandler waitingHandler
     ) throws IOException {
+
+        // de novo only projects are created without a protein sequence database
+        if (projectDetails.getFastaFile() == null) {
+            return null;
+        }
 
         File providedFastaLocation = new File(projectDetails.getFastaFile());
 

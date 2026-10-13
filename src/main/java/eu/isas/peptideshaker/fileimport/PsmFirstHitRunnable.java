@@ -40,6 +40,12 @@ public class PsmFirstHitRunnable implements Runnable {
      */
     private final SequenceProvider sequenceProvider;
     /**
+     * Boolean indicating whether the project is a de novo only project imported
+     * without a protein sequence database, in which case peptides are not
+     * expected to map to a protein.
+     */
+    private final boolean noFastaFile;
+    /**
      * The spectrum provider.
      */
     private final SpectrumProvider spectrumProvider;
@@ -139,6 +145,7 @@ public class PsmFirstHitRunnable implements Runnable {
         this.spectrumMatchQueue = spectrumMatchQueue;
         this.identificationParameters = identificationParameters;
         this.sequenceProvider = sequenceProvider;
+        this.noFastaFile = sequenceProvider instanceof EmptySequenceProvider;
         this.spectrumProvider = spectrumProvider;
         this.inputMap = inputMap;
         this.waitingHandler = waitingHandler;
@@ -249,18 +256,17 @@ public class PsmFirstHitRunnable implements Runnable {
                             filterPassed = false;
                             proteinIssue++;
 
-                        } else {
+                        } else if (peptide.getProteinMapping().isEmpty() && !noFastaFile) {
 
-                            if (peptide.getProteinMapping().isEmpty()) {
+                            // de novo only projects have no database to map peptides to,
+                            // so a missing protein mapping is only an issue with a FASTA file
+                            missingProteins++;
+                            filterPassed = false;
 
-                                missingProteins++;
-                                filterPassed = false;
+                            if (firstPeptideHitNoProtein != null) {
 
-                                if (firstPeptideHitNoProtein != null) {
+                                firstHitsNoProteins.add(peptideAssumption);
 
-                                    firstHitsNoProteins.add(peptideAssumption);
-
-                                }
                             }
                         }
 

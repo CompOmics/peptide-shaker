@@ -3779,6 +3779,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             try {
                 String[] spectrumTitles = peptideShakerGUI.getSpectrumProvider().getSpectrumTitles(fileSelected);
+                if (row < 0 || row >= spectrumTitles.length) {
+                    return null;
+                }
                 String spectrumTitle = spectrumTitles[row];
                 long spectrumMatchKey = SpectrumMatch.getKey(fileSelected, spectrumTitle);
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumMatchKey);
@@ -3919,18 +3922,37 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
-                return "";
+                return null;
             }
         }
 
         @Override
         public Class getColumnClass(int columnIndex) {
-            for (int i = 0; i < getRowCount(); i++) {
-                if (getValueAt(i, columnIndex) != null) {
-                    return getValueAt(i, columnIndex).getClass();
-                }
+            int modelColumnIndex = columnIndex;
+
+            if (!peptideShakerGUI.getDisplayParameters().showScores() && columnIndex > 9) {
+                modelColumnIndex = columnIndex + 1;
             }
-            return (Double.valueOf(0.0)).getClass();
+
+            switch (modelColumnIndex) {
+                case 0:
+                case 1:
+                case 3:
+                case 12:
+                    return Integer.class;
+                case 4:
+                case 6:
+                case 7:
+                case 10:
+                case 11:
+                    return Double.class;
+                case 2:
+                case 5:
+                case 8:
+                case 9:
+                default:
+                    return String.class;
+            }
         }
 
         @Override
@@ -4065,19 +4087,32 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
-                return "";
+                return null;
             }
             return "";
         }
 
         @Override
         public Class getColumnClass(int columnIndex) {
-            for (int i = 0; i < getRowCount(); i++) {
-                if (getValueAt(i, columnIndex) != null) {
-                    return getValueAt(i, columnIndex).getClass();
-                }
+            int modelColumnIndex = columnIndex;
+
+            if (!peptideShakerGUI.getDisplayParameters().showScores() && columnIndex > 3) {
+                modelColumnIndex = columnIndex + 1;
             }
-            return (new String()).getClass();
+
+            switch (modelColumnIndex) {
+                case 0:
+                case 1:
+                case 6:
+                    return Integer.class;
+                case 4:
+                case 5:
+                    return Double.class;
+                case 2:
+                case 3:
+                default:
+                    return String.class;
+            }
         }
 
         @Override
@@ -4201,18 +4236,32 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
-                return "";
+                return null;
             }
         }
 
         @Override
         public Class getColumnClass(int columnIndex) {
-            for (int i = 0; i < getRowCount(); i++) {
-                if (getValueAt(i, columnIndex) != null) {
-                    return getValueAt(i, columnIndex).getClass();
-                }
+            int modelColumnIndex = columnIndex;
+
+            if (!peptideShakerGUI.getDisplayParameters().showScores() && columnIndex > 4) {
+                modelColumnIndex = columnIndex + 1;
             }
-            return (new String()).getClass();
+
+            switch (modelColumnIndex) {
+                case 0:
+                case 1:
+                case 2:
+                case 4:
+                case 7:
+                    return Integer.class;
+                case 5:
+                case 6:
+                    return Double.class;
+                case 3:
+                default:
+                    return String.class;
+            }
         }
 
         @Override

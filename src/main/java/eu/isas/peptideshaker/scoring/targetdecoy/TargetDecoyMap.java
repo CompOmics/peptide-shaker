@@ -328,6 +328,13 @@ public class TargetDecoyMap extends ExperimentObject {
 
         }
 
+        // nothing to estimate for an empty map (e.g. de novo only projects without decoys)
+        if (scores.isEmpty()) {
+
+            return;
+
+        }
+
         if (nmax == null) {
 
             estimateNs();
